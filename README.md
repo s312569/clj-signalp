@@ -65,6 +65,7 @@ user>
 
 All three functions take a :params keyword where some arguments to
 signalP can be specified ("-s" "-t" "-u" "-U" "-M" "-c"):
+```clojure
 user> (with-open [r (io/reader "/path/to/fasta-file.fasta")]
                     (filter-signalp (fa/fasta-seq r)
                                     :params {"-t" "euk"}))
