@@ -20,9 +20,9 @@ user>
 ```
 Results are sent to the outfile in the signalP 'short' format.
 
-To run signalP on a file of fasta formatted protein sequences and
-returns a file object containing the results in the signalP 'short'
-format:
+To run signalP on a file of fasta formatted protein sequences use
+`signalp-file` which returns a file object containing the results in
+the signalP 'short' format:
 ```clojure
 user> (signalp-file "/path/to/fasta-file.fasta" "/path/out-prefix")
 (#object[java.io.File 0x1e6855b2 "/path/out.prefix-1.signalp"])
