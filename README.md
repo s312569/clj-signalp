@@ -4,7 +4,7 @@ A Clojure library for running SignalP and parsing the results.
 
 ## Installation
 
-Leiningren: [clj-signalp "0.1.0"]
+Leiningren: [clj-signalp "0.1.1"]
 
 To include in your project: (:require [clj-signalp.core :as sp])
 

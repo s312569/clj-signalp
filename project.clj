@@ -1,4 +1,4 @@
-(defproject clj-signalp "0.1.0"
+(defproject clj-signalp "0.1.1"
   :description "Clojure library for running and parsing signalP"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}

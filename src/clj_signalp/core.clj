@@ -26,24 +26,27 @@
   sequences 10,000 at a time and outputs the results to outfile in the
   signalp 'short' format."
   [coll outfile & {:keys [params] :or {params {}}}]
-  (let [c (atom 0)]
-    (doall
-     (map #(let [in (fs/absolute (fa/fasta->file % (fs/temp-file "signalp-")))
-                 o (fs/absolute (str outfile "-" (swap! c inc) ".signalp"))]
-             (try
-               (let [sp @(sh (signal-command params in)
-                             {:out (io/output-stream o)}
-                             :close-err? false)]
-                 (if (and (= 0 (:exit sp)) (nil? (:err sp)))
-                   o
-                   (if (:err sp)
-                     (throw (Throwable. (str "SignalP error: " (:err sp))))
-                     (throw (Throwable. (str "Exception: " (:exception sp)))))))
-               (catch Exception e
-                 (fs/delete o)
-                 (fs/delete in)
-                 (throw e))))
-          (partition-all 10000 coll)))))
+  (let [c (atom 0)
+        fl (atom [])]
+    (try
+      (doall
+       (map #(let [in (fs/absolute (fa/fasta->file % (fs/temp-file "signalp-")))
+                   o (fs/absolute (str outfile "-" (swap! c inc) ".signalp"))]
+               (swap! fl conj o)
+               (try
+                 (with-open [out (io/output-stream o)]
+                   (let [sp @(sh (signal-command params (str in))
+                                 {:out out} :close-err? false)]
+                     (if (and (= 0 (:exit sp)) (nil? (:err sp)))
+                       o
+                       (if (:err sp)
+                         (throw (Exception. (str "SignalP error: " (:err sp))))
+                         (throw (Exception. (str (:exception sp))))))))
+                 (finally (fs/delete in))))
+            (partition-all 10000 coll)))
+      (catch Exception e
+        (doseq [f @fl] (fs/delete f))
+        (throw e)))))
 
 (defn signalp-file
   "Runs signalp on each protein in a file of fasta formatted protein
